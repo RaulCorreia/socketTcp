@@ -1,10 +1,13 @@
 package sockets.tcp.client;
 
-
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
+
+import modelo.Produto;
 
 public class Client implements Runnable{
 
@@ -13,23 +16,29 @@ public class Client implements Runnable{
     private Scanner teclado;
     private boolean menu;
     private boolean subMenu;
+    
+    private PrintStream saida; 
+ 	private DataInputStream in; 
+ 	private DataOutputStream out;
 
-    public Client(Socket c){
+    public Client(Socket c) throws IOException{
         this.cliente = c;
         this.teclado = new Scanner(System.in);
         this.menu = true;
         this.subMenu = true;
+        
+        this.in = new DataInputStream(c.getInputStream()); 
+        this.out = new DataOutputStream(c.getOutputStream());
     }
 
     public void run() {
         try {
-            PrintStream saida;
+           
             System.out.println("O cliente conectou ao servidor");
 
             //Cria  objeto para enviar a mensagem ao servidor
-            saida = new PrintStream(this.cliente.getOutputStream());
+            this.saida = new PrintStream(this.cliente.getOutputStream());
 
-            
             
             while(this.menu){
             	
@@ -66,10 +75,9 @@ public class Client implements Runnable{
             	}
          
             	
-            	//saida.println(this.option);          
             }
 
-            saida.close();
+            this.saida.close();
             this.teclado.close();
             this.cliente.close();
             System.out.println("Fim do cliente!");
@@ -80,7 +88,7 @@ public class Client implements Runnable{
     }
     
     
-    private void menuFunc() {
+    private void menuFunc() throws IOException {
     	
     	do {
 	    	System.out.println("Digite o numero do menu");
@@ -91,7 +99,8 @@ public class Client implements Runnable{
 	    	System.out.println("4- Pesquisar por nome");
 	    	System.out.println("5- Alterar Produto");
 	    	System.out.println("6- Exibir Quantidade de produtos");
-	    	System.out.println("7- Sair");
+	    	System.out.println("7- Comprar produto");
+	    	System.out.println("8- Sair");
     	
 	    	this.option = teclado.nextLine();
 	    	int digito;
@@ -101,25 +110,58 @@ public class Client implements Runnable{
 	    		digito = Integer.parseInt(this.option);
 	    		
 	    		switch(digito) {
-	    			case 1:
-	    				System.out.println("Opção 1");
+	    			case 1:{
+	    				System.out.flush();
+	    				Produto p = new Produto();
+	    				
+	    				System.out.println("Digite o id do produto");
+	    				String id = teclado.nextLine();
+    					p.setCodigo(id);
+	    				
+	    				System.out.println("Digite o nome do produto");
+	    				String nome = teclado.nextLine();
+    					p.setNome(nome);
+    					
+    					System.out.println("Digite o tipo do produto");
+	    				String tipo = teclado.nextLine();
+    					p.setTipo(tipo);
+    					
+    					System.out.println("Digite o preço do produto");
+	    				String preco = teclado.nextLine();
+    					p.setPreco(preco);
+    					
+    					// Out envia para o servidor o produto
+	    				this.out.writeUTF(p.toString());
+	    				
+	    				// In aguarda a resposta do servidor
+	    				String response = this.in.readUTF();
+	    				
+	    				System.out.println(response);
+    				}
 	    				break;
 	    			case 2:
+	    				this.out.writeUTF("Opção2");
 	    				System.out.println("Opção 2");
 	    				break;
 	    			case 3:
+	    				this.out.writeUTF("Opção3");
 	    				System.out.println("Opção 3");
 	    				break;
 	    			case 4:
+	    				this.out.writeUTF("Opção4");
 	    				System.out.println("Opção 4");
 	    				break;
 	    			case 5:
+	    				this.out.writeUTF("Opção5");
 	    				System.out.println("Opção 5");
 	    				break;
 	    			case 6:
 	    				System.out.println("Opção 6");
 	    				break;
 	    			case 7:
+	    				System.out.println("Opção 7");
+	    				break;
+	    			case 8:
 	    				this.subMenu = false;
 	    				break;
 	        	}
