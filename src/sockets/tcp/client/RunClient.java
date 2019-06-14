@@ -4,22 +4,28 @@ package sockets.tcp.client;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.Scanner;
 
 public class RunClient {
+	
+	public static void main(String args[]) throws IOException {
 
-	public static void main(String args[]) throws UnknownHostException, IOException {
-
-    	
         Socket socket = new Socket("127.0.0.1", 12345);
         InetAddress inet = socket.getInetAddress();
         System.out.println("HostAddress = "+inet.getHostAddress());
         System.out.println("HostName = "+inet.getHostName());
-
+        System.out.println("O cliente conectou ao servidor");
+        
       
-        Client c = new Client(socket);
-        Thread t = new Thread(c);
-        t.start();
+        SimpleCliente cliente = new SimpleCliente(socket);
+        cliente.init();
+        
+        System.out.println("Fim do cliente!");
+//        Client c = new Client(socket);
+//        Thread t = new Thread(c);
+//        t.start();
     }
+	
+	
 
 }
