@@ -3,6 +3,10 @@ package modelo;
 import java.util.HashMap;
 import java.util.Map;
 
+import Itens.Alimento;
+import Itens.Eletronico;
+import Itens.Roupa;
+
 public class ListProduto {
 	
 	
@@ -60,27 +64,33 @@ public class ListProduto {
 		}
 	}
 	
-	public String updateItem(String nome, Produto novo) {
+	public String updateItem(String nome, String novoCodigo, String novoNome, String novoPreco) {
 		
 		if(checkExist(nome)) {
+			
 			Produto old = getItem(nome);
 			
-			if(!novo.getCodigo().isEmpty()) {
-				old.setCodigo(novo.getCodigo());
-			}
+			if(old.getTipo().equalsIgnoreCase("Alimento")) {
+				
+    			Alimento novo = new Alimento(novoCodigo, novoNome, novoPreco);
+    			delete(nome);
+    			setItem(novo);
+    			
+    		} else if(old.getTipo().equalsIgnoreCase("Eletronico")) {
+    			
+    			Eletronico novo = new Eletronico(novoCodigo, novoNome, novoPreco);
+    			delete(nome);
+    			setItem(novo);
+    			
+    		} else {
+    			
+    			Roupa novo = new Roupa(novoCodigo, novoNome, novoPreco);
+    			delete(nome);
+    			setItem(novo);
+    			
+    		}
 			
-			if(!novo.getNome().isEmpty()) {
-				old.setNome(novo.getNome());
-			}
-			
-			if(!novo.getTipo().isEmpty()) {
-				old.setTipo(novo.getTipo());
-			}
-			
-			if(!novo.getPreco().isEmpty()) {
-				old.setPreco(novo.getPreco());
-			}
-			
+		
 			return "Objeto Atualizado";
 			
 		} else {

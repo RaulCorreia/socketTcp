@@ -6,9 +6,10 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import Itens.Alimento;
 import Itens.Eletronico;
+import Itens.Roupa;
 import modelo.ListProduto;
-import modelo.Produto;
 import modelo.Usuario;
 import constants.Const;
 
@@ -46,11 +47,28 @@ public class RunServer {
         Eletronico e3 = new Eletronico("3", "Som", "250,00");
         Eletronico e4 = new Eletronico("4", "Computador", "1500,00");
         
+        Alimento a1 = new Alimento("5", "Arroz", "5,00");
+        Alimento a2 = new Alimento("6", "Feijão", "8,00");
+        Alimento a3 = new Alimento("7", "Farinha", "2,00");
+        Alimento a4 = new Alimento("8", "Leite", "2,50");
+        
+        Roupa r1 = new Roupa("9", "Camisa", "100,00");
+        Roupa r2 = new Roupa("10", "Calça", "150,00");
+        Roupa r3 = new Roupa("11", "Meia", "15,00");
+        Roupa r4 = new Roupa("12", "Cueca", "25,00");
         
         lista.setItem(e1);
         lista.setItem(e2);
         lista.setItem(e3);
         lista.setItem(e4);
+        lista.setItem(a1);
+        lista.setItem(a2);
+        lista.setItem(a3);
+        lista.setItem(a4);
+        lista.setItem(r1);
+        lista.setItem(r2);
+        lista.setItem(r3);
+        lista.setItem(r4);
 
         while (true) {
           Socket socket = socketServidor.accept();

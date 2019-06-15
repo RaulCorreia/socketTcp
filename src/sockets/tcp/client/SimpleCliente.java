@@ -31,8 +31,9 @@ public class SimpleCliente {
         this.menu = true;
         this.subMenu = true;
         
-        //Cria  objeto para enviar a mensagem ao servidor
+        // Cria objeto para receber a mensagem ao servidor
 		this.in = new DataInputStream(this.cliente.getInputStream()); 
+		// Cria objeto para enviar a mensagem ao servidor
         this.out = new DataOutputStream(this.cliente.getOutputStream());
     }
     
@@ -42,71 +43,61 @@ public class SimpleCliente {
            
             while(this.menu){
             	
-            	System.out.println("Iniciar ou Sair?");
+            	System.out.println("Login ou Sair?");
             	this.option = teclado.nextLine();
             	
-            	if(this.option.equalsIgnoreCase("iniciar")) {
+            	if(this.option.equalsIgnoreCase("login")) {
             	
 	            	System.out.println("Por Favor insira suas credenciais:");
 	            	System.out.print("Usuario: ");
 	            	this.option = teclado.nextLine();
 	            	
+	            	// Obtem o usuario e envia para o servidor
 	            	String operacao = "login@"+this.option;
     				String response = sendMessage(operacao);
     				
+    				// Se usuario existir
     				if(response.equalsIgnoreCase("true")) {
     					
     					System.out.print("Senha: ");
     					this.option = teclado.nextLine();
     					
+    					// Obtem a senha e envia para o servidor
     					String op = "pass@"+this.option;
         				String res = sendMessage(op);
         				
-        				if(response.equalsIgnoreCase("false")) {
+        				// Se não existir
+        				if(res.equalsIgnoreCase("false")) {
         					
-        					System.out.print("Senha invalida");
+        					System.out.println("Senha invalida");
         					
         				} else {
         					
-        					if(response.equalsIgnoreCase("funcionario")) {
+        					// Se existir, identifica na resposta do servidor sua Role
+        					if(res.equalsIgnoreCase("funcionario")) {
         						
+        						// Menu do funcionario
         						menuFunc();
         						
         					} else {
-        						System.out.print("Menu Usuario");
+        						
+        						// Menu do cliente
+        						menuCliente();
+        						
         					}
         					
         					
         				}
         				
     				} else {
-    					System.out.print("Usuario invalido");
+    					// Se não existir Usuario
+    					System.out.println("Usuario invalido");
     				}
     				
     				
-    				
-    				
-	            	/*
-	            	if(this.option.equalsIgnoreCase("cliente")) {
-	            		
-	            	} else if(this.option.equalsIgnoreCase("func")) {
-	            		
-	            		System.out.print("Senha: ");
-	            		this.option = teclado.nextLine();
-	            		if(this.option.equalsIgnoreCase("123")) {
-	            			
-	            			menuFunc();
-	            			
-	            		} else {
-	            			System.out.println("Senha invalida...");
-	            		}
-	            		
-	            	} else {
-	            		System.out.println("Opção invalida...");
-	            	}
-	            	*/
-            	
+    
             	} else {
+            		// Finalizar o cliente e conexão
             		this.menu = false;
             		String operacao = "close@close";
     				sendMessage(operacao);
@@ -128,6 +119,7 @@ public class SimpleCliente {
     }
     
     
+    // Menu do funcionario
     private void menuFunc() throws IOException {
     	
   
@@ -188,7 +180,7 @@ public class SimpleCliente {
     					
     					String operacao = "add@"+p.toString()+"@"+tipo;
     					
-    					
+    					// Envia para o servidor e exibe a resposta
     					System.out.println(sendMessage(operacao));
     					
     					System.out.println("\nEnter para continuar");
@@ -199,13 +191,12 @@ public class SimpleCliente {
 	    				
 	    			case 2: { // Delete
 	    				
-	    				System.out.flush();
-	    				
 	    				System.out.println("Digite o nome do produto para deletar");
 	    				String nome = teclado.nextLine();
 	    				
 	    				String operacao = "delete@"+nome.toString();
 	    				
+	    				// Envia para o servidor e exibe a resposta
 	    				System.out.println(sendMessage(operacao));
 	    				
 	    				System.out.println("\nEnter para continuar");
@@ -216,13 +207,13 @@ public class SimpleCliente {
 	    				
 	    			case 3: { // List
 	    				
-    					System.out.flush();
-	    			
 	    				String operacao = "list@list";
 	    				
+	    				// Envia para o servidor e obtem a resposta
 	    				String list = sendMessage(operacao);
 	    				String objetos[] = list.split("!");
 	    				
+	    				// Exibe a lista de produtos
 	    				System.out.println("Lista de Produtos:");
 	    				for(int i = 0; i < objetos.length; i++) {
 	    					
@@ -246,10 +237,12 @@ public class SimpleCliente {
 	    				
 	    				String operacao = "search@"+nome.toString();
 	    				
+	    				// Envia para o servidor e obtem a resposta
 	    				String response = sendMessage(operacao);
 	    				
 	    				String objeto[] = response.split(";");
 	    				
+	    				// Exibe a resposta formatada
 	    				if(objeto.length > 2) {
 		    				System.out.println("Resultado:");
 	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
@@ -287,6 +280,7 @@ public class SimpleCliente {
     					
 	    				String operacao = "update@"+nome.toString()+"@"+p.toString();
 	    				
+	    				// Envia para o servidor e exibe a resposta
 	    				System.out.println(sendMessage(operacao));
 	    				
 	    				System.out.println("\nEnter para continuar");
@@ -301,6 +295,7 @@ public class SimpleCliente {
 	    				
 	    				String operacao = "show@qtd";
 	    				
+	    				// Envia para o servidor e exibe a resposta
 	    				System.out.println(sendMessage(operacao));
     					
     					System.out.println("\nEnter para continuar");
@@ -317,6 +312,7 @@ public class SimpleCliente {
 	    				
 	    				String operacao = "buy@"+nome.toString();
 	    				
+	    				// Envia para o servidor e exibe a resposta
 	    				System.out.println(sendMessage(operacao));
 	    				
 	    				System.out.println("\nEnter para continuar");
@@ -338,9 +334,131 @@ public class SimpleCliente {
     	
     	}while(this.subMenu);
     	
+    	this.subMenu = true;
     }
     
     
+    // Menu do cliente
+    private void menuCliente() throws IOException {
+    	do {
+    		
+	    	System.out.println("Digite o numero do menu");
+	    	System.out.println("Opções:");
+	    	System.out.println("1- Listar Produtos");
+	    	System.out.println("2- Pesquisar por nome");
+	    	System.out.println("3- Exibir Quantidade de produtos");
+	    	System.out.println("4- Comprar produto");
+	    	System.out.println("5- Sair");
+	    	System.out.print(">> ");
+    	
+	    	this.option = teclado.nextLine();
+	    	int digito;
+	    	
+	    	try {
+	    		
+	    		digito = Integer.parseInt(this.option);
+	    		
+	    		switch(digito) {
+	    		
+	    			
+	    			case 1: { // List
+	    				
+    					System.out.flush();
+	    			
+	    				String operacao = "list@list";
+	    				
+	    				String list = sendMessage(operacao);
+	    				String objetos[] = list.split("!");
+	    				
+	    				System.out.println("Lista de Produtos:");
+	    				for(int i = 0; i < objetos.length; i++) {
+	    					
+	    					String objeto[] = objetos[i].split(";");
+	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					
+	    				}
+	    				
+	    				System.out.println("\nEnter para continuar");
+	    				teclado.nextLine();
+	    				
+	    			}
+	    				break;
+	    				
+	    			case 2:{ // Search
+	    				
+	    				System.out.flush();
+	    				
+	    				System.out.println("Digite o nome do produto");
+	    				String nome = teclado.nextLine();
+	    				
+	    				String operacao = "search@"+nome.toString();
+	    				
+	    				String response = sendMessage(operacao);
+	    				
+	    				String objeto[] = response.split(";");
+	    				
+	    				if(objeto.length > 2) {
+		    				System.out.println("Resultado:");
+	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    				} else {
+	    					System.out.println(response);
+	    				}
+    					
+    					System.out.println("\nEnter para continuar");
+	    				teclado.nextLine();
+	    				
+	    			}
+	    				break;
+	    				
+	    			case 3:{ // Show qtd
+	    				
+    					System.out.flush();
+	    				
+	    				String operacao = "show@qtd";
+	    				
+	    				System.out.println(sendMessage(operacao));
+    					
+    					System.out.println("\nEnter para continuar");
+	    				teclado.nextLine();
+	    				
+	    			}
+	    				break;
+	    				
+	    			case 4:{ // Buy
+	    				System.out.flush();
+	    				
+	    				System.out.println("Digite o nome do produto");
+	    				String nome = teclado.nextLine();
+	    				
+	    				String operacao = "buy@"+nome.toString();
+	    				
+	    				System.out.println(sendMessage(operacao));
+	    				
+	    				System.out.println("\nEnter para continuar");
+	    				teclado.nextLine();
+	    			}
+	    				break;
+	    				
+	    			case 5: // Exit
+	    				this.subMenu = false;
+	    				break;
+	        	}
+	    		
+	    		
+
+	    		
+	    	}catch(NumberFormatException e) {
+	    		System.out.println("Opção Invalida...");
+	    	}
+    	
+    	}while(this.subMenu);
+    	
+    	this.subMenu = true;
+    }
+    
+    
+    // Comunicação com o servidor
+    // envia a operação e recebe a resposta passando adiante
     private String sendMessage(String message) {
     	
     	

@@ -4,7 +4,6 @@ package sockets.tcp.client;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class RunClient {
 	
@@ -21,9 +20,6 @@ public class RunClient {
         cliente.init();
         
         System.out.println("Fim do cliente!");
-//        Client c = new Client(socket);
-//        Thread t = new Thread(c);
-//        t.start();
     }
 	
 	

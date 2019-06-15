@@ -5,7 +5,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Map;
 
 import Itens.Alimento;
@@ -88,13 +87,16 @@ public class Server implements Runnable{
 	        		
 	        	} else if(acao[0].equalsIgnoreCase("login")) {
 	        		
+	        		response = "false";
 	        		for (Object key : usuarios.keySet()) { 
+	        			
 	        			if(key.toString().equalsIgnoreCase(acao[1])) {
 	        				response = "true";
 	        				this.login = usuarios.get(acao[1]);
-	        			} else
-	        				response = "false";
+	        			}
+	        				
 	        		}
+	        		
 	        		
 	        	} else if(acao[0].equalsIgnoreCase("pass")) {
 	        		
@@ -147,11 +149,11 @@ public class Server implements Runnable{
     	// Cria objeto e add na lista de produto
     	Produto novo;
     	if(tipo.equalsIgnoreCase("1"))
-    		novo = new Alimento(produto[0], produto[2], produto[3]);
+    		novo = new Alimento(produto[0], produto[1], produto[3]);
     	else if(tipo.equalsIgnoreCase("2"))
-    		novo = new Eletronico(produto[0], produto[2], produto[3]);
+    		novo = new Eletronico(produto[0], produto[1], produto[3]);
     	else
-    		novo = new Roupa(produto[0], produto[2], produto[3]);
+    		novo = new Roupa(produto[0], produto[1], produto[3]);
     	
     	this.lista.setItem(novo);
     	
@@ -184,24 +186,7 @@ public class Server implements Runnable{
     		return "Todos os campos devem ser preenchidos";
     	}
     	
-    	if(this.lista.checkExist(nome)) {
-    		Produto prod = this.lista.getItem(nome);
-    		
-    		if(prod.getTipo().equalsIgnoreCase("Alimento")) {
-    			Alimento novo = new Alimento(produto[0], produto[2], produto[3]);
-    			return this.lista.updateItem(nome, novo);
-    		} else if(prod.getTipo().equalsIgnoreCase("Eletronico")) {
-    			Eletronico novo = new Eletronico(produto[0], produto[2], produto[3]);
-    			return this.lista.updateItem(nome, novo);
-    		} else {
-    			Roupa novo = new Roupa(produto[0], produto[2], produto[3]);
-    			return this.lista.updateItem(nome, novo);
-    		}
-    		
-    	} else {
-    		return "Item não existe";
-    	}
-    	
+    	return this.lista.updateItem(nome, produto[0], produto[1], produto[3]);
     }
     
     private String buyProduto(String nome) {
