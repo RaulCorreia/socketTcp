@@ -4,6 +4,9 @@ package sockets.tcp.server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Map;
 
@@ -28,6 +31,15 @@ public class Server implements Runnable{
     private boolean close;
     
     private Usuario login;
+    
+    
+    private String assinaturaCliente = "";
+    
+    
+    // Multicast
+    private DatagramSocket multiSocket;
+    private InetAddress group;
+    private byte[] buf;
 
     public Server(Socket cliente, ListProduto lista, Map<String, Usuario> usuarios) throws IOException{
         this.socketCliente = cliente;
@@ -39,6 +51,9 @@ public class Server implements Runnable{
         
         this.close = true;
         
+        
+        this.multiSocket = new DatagramSocket();
+        this.group = InetAddress.getByName("230.0.0.0");
     }
 
    
@@ -53,7 +68,12 @@ public class Server implements Runnable{
 	        	String acao[] = rcv.split("@");
 	        	String response = "Opção desconhecida";
 	            
-	        	if(acao[0].equalsIgnoreCase("add")) {
+	        	
+	        	if(acao[0].equalsIgnoreCase("sign")) {
+	        		
+	        		this.assinaturaCliente = acao[1];
+	        	
+	        	} else if(acao[0].equalsIgnoreCase("add")) {
 	        		
 	        		response = addProduto(acao[1], acao[2]);
 	        		
@@ -157,6 +177,8 @@ public class Server implements Runnable{
     	
     	this.lista.setItem(novo);
     	
+    	sendCast("Um item foi adicionado a lista");
+    	
     	return "Adicionado";
     }
     
@@ -165,7 +187,18 @@ public class Server implements Runnable{
     }
     
     private String deleteProduto(String nome) {
-    	return this.lista.deleteFromList(nome);
+    	
+    	boolean result = this.lista.deleteFromList(nome);
+    	String mensagem = "";
+    	if(result) {
+    		mensagem = "Produto Deletado";
+    		String msgCast = "O Produto " + nome + " não esta mais disponivel";
+    		sendCast(msgCast);
+    	} else {
+    		 mensagem = "Item não existe ou não esta mais disponivel";
+    	}
+    	
+    	return mensagem;
     }
 
     private String getProduto(String nome) {
@@ -186,11 +219,26 @@ public class Server implements Runnable{
     		return "Todos os campos devem ser preenchidos";
     	}
     	
-    	return this.lista.updateItem(nome, produto[0], produto[1], produto[3]);
+    	
+    	boolean result = this.lista.updateItem(nome, produto[0], produto[1], produto[3]);
+    	String mensagem = "";
+    	
+    	if(result) {
+    		mensagem = "Objeto Atualizado";
+    		String msgCast = "O Produto " + nome + " foi atualizado";
+    		sendCast(msgCast);
+    	} else {
+    		 mensagem = "Item não existe ou não esta mais disponivel";
+    	}
+    	
+    	return mensagem;
     }
     
     private String buyProduto(String nome) {
     	if(this.lista.delete(nome)) {
+    		
+    		String msgCast = "O Produto " + nome + " não esta mais disponivel";
+    		sendCast(msgCast);
     		return "Produto Comprado Com Sucesso!";
     	} else {
     		return "Produto não existe";
@@ -199,5 +247,18 @@ public class Server implements Runnable{
     
     private String quantidade() {
     	return "Possui atualmente " + this.lista.size() + " produtos.";
+    }
+    
+    private void sendCast(String mensagem) {
+    	
+    	try {
+    		mensagem = this.assinaturaCliente + "!" + mensagem;
+	    	buf = mensagem.getBytes();
+	    	DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 4446);
+			multiSocket.send(packet);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

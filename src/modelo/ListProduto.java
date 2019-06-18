@@ -55,16 +55,16 @@ public class ListProduto {
 		}
 	}
 	
-	public String deleteFromList(String nome) {
+	public boolean deleteFromList(String nome) {
 		
 		if(delete(nome)){
-			return "Produto Deletado";
+			return true;
 		} else {
-			return "Item não existe";
+			return false;
 		}
 	}
 	
-	public String updateItem(String nome, String novoCodigo, String novoNome, String novoPreco) {
+	public boolean updateItem(String nome, String novoCodigo, String novoNome, String novoPreco) {
 		
 		if(checkExist(nome)) {
 			
@@ -91,10 +91,10 @@ public class ListProduto {
     		}
 			
 		
-			return "Objeto Atualizado";
+			return true;
 			
 		} else {
-			return "Item não existe";
+			return false;
 		}
 	}
 	

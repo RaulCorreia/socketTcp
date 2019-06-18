@@ -18,7 +18,6 @@ public class RunServer {
 	public static void main(String[] args) throws Exception{ 
 		
 
-        
         ServerSocket socketServidor = new ServerSocket(12345);
         System.out.println("Servidor rodando na porta "+socketServidor.getLocalPort());
         System.out.println("HostAddress = "+ InetAddress.getLocalHost().getHostAddress());
@@ -69,7 +68,8 @@ public class RunServer {
         lista.setItem(r2);
         lista.setItem(r3);
         lista.setItem(r4);
-
+        
+        
         while (true) {
           Socket socket = socketServidor.accept();
           

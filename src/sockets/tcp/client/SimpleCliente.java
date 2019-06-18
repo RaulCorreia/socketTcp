@@ -3,7 +3,11 @@ package sockets.tcp.client;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Scanner;
 
 import Itens.Alimento;
@@ -23,8 +27,15 @@ public class SimpleCliente {
  	private DataInputStream in; 
  	private DataOutputStream out;
  	
+ 	
+ 	private MulticastSocket multiSocket;
+ 	private InetAddress group;
+ 	private MulticastReceiver multicast = null;
+ 	
+ 	
+ 	private String sign = "";
 
-    public SimpleCliente(Socket c) throws IOException{
+    public SimpleCliente(Socket c, MulticastSocket multiSocket, InetAddress group) throws IOException{
     	
         this.cliente = c;
         this.teclado = new Scanner(System.in);
@@ -35,6 +46,16 @@ public class SimpleCliente {
 		this.in = new DataInputStream(this.cliente.getInputStream()); 
 		// Cria objeto para enviar a mensagem ao servidor
         this.out = new DataOutputStream(this.cliente.getOutputStream());
+        
+        
+        // Multicast
+        this.multiSocket = multiSocket;
+        this.group = group;
+        
+        
+        // Assinatura do cliente
+        Random r = new Random();
+        this.sign = String.valueOf(r.nextInt());
     }
     
     
@@ -47,7 +68,8 @@ public class SimpleCliente {
             	this.option = teclado.nextLine();
             	
             	if(this.option.equalsIgnoreCase("login")) {
-            	
+            		
+            		            	
 	            	System.out.println("Por Favor insira suas credenciais:");
 	            	System.out.print("Usuario: ");
 	            	this.option = teclado.nextLine();
@@ -72,6 +94,18 @@ public class SimpleCliente {
         					System.out.println("Senha invalida");
         					
         				} else {
+        					
+        					
+        			        // Registra o cliente no servidor
+        			        String sign = "sign@"+this.sign;
+            				sendMessage(sign);
+            				
+            				
+            				// Se fez o login corretamente inicia o ouvinte do multicast
+        					MulticastReceiver multicast = new MulticastReceiver(this.multiSocket, this.group, this.sign);
+        			        Thread t = new Thread(multicast);
+        			        t.start();
+        			        
         					
         					// Se existir, identifica na resposta do servidor sua Role
         					if(res.equalsIgnoreCase("funcionario")) {
@@ -101,6 +135,10 @@ public class SimpleCliente {
             		this.menu = false;
             		String operacao = "close@close";
     				sendMessage(operacao);
+    				
+    				if(multicast != null) {
+    					multicast.desativar();
+    				}
             	}
          
             	
@@ -480,5 +518,66 @@ public class SimpleCliente {
 		
 		return "";
 		
+    }
+    
+    
+    
+    // Classe responsavel por ficar ouvindo o multicast
+    public class MulticastReceiver extends Thread {
+    	
+        protected MulticastSocket multiSocket = null;
+        protected byte[] buf = new byte[256];
+        protected InetAddress group;
+        protected boolean run = true;
+        protected String sign;
+        
+        
+        public MulticastReceiver(MulticastSocket multiSocket, InetAddress group, String sign) {
+        	this.multiSocket = multiSocket;
+        	this.group = group;
+        	this.sign = sign;
+        }
+     
+        public void run() {
+        	try {
+        		
+        		while (this.run) {
+            	
+            		DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                
+					multiSocket.receive(packet);
+				
+	                String received = new String(packet.getData(), 0, packet.getLength());
+	                if ("end".equals(received)) {
+	                    break;
+	                } else {
+	                	
+	                	String split[] = received.split("!");
+	                	
+	                	
+	                	// Se a mensagem originol do cliente ele nao ira exibir
+	                	// Somente para o restante do grupo
+	                	if(!split[0].equals(sign)) {
+		                	System.out.println(split[1]);
+	                	}
+	                	
+	                }
+               
+	            }
+        		
+	            multiSocket.leaveGroup(group);
+	            multiSocket.close();
+            
+        	 } catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        }
+        
+        
+        public void desativar() {
+        	this.run = false;
+        }
+        
     }
 }
