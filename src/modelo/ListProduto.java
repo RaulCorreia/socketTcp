@@ -2,6 +2,8 @@ package modelo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import Itens.Alimento;
 import Itens.Eletronico;
@@ -33,12 +35,31 @@ public class ListProduto {
 		}
 	}
 	
+	public Produto getItemByCod(String codigo) {
+		
+		if(checkId(codigo)) {
+			String nome = "";
+			for (Object key : lista.keySet()) { 
+				Produto objeto = lista.get(key); 
+				if(objeto.getCodigo().equalsIgnoreCase(codigo))
+					nome = objeto.getNome();
+				
+			}
+			
+			Produto item = lista.get(nome.toLowerCase());
+			return item;
+		} else {
+			return null;
+		}
+	}
 	
 	public String getList() {
 		
 		String listString = "";
 		
-		for (Object key : lista.keySet()) { 
+		SortedSet<String> keys = new TreeSet<>(lista.keySet());
+		
+		for (Object key : keys) { 
 			Produto objeto = lista.get(key); 
 			listString += objeto.toString() + "!";
 		}

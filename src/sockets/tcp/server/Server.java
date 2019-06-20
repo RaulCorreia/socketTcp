@@ -89,6 +89,10 @@ public class Server implements Runnable{
 	        		
 	        		response = getProduto(acao[1]);
 	        		
+	        	} else if(acao[0].equalsIgnoreCase("searchCod")) {
+	        		
+	        		response = getProdutoCod(acao[1]);
+	        		
 	        	} else if(acao[0].equalsIgnoreCase("update")) {
 	        		
 	        		response = update(acao[1], acao[2]);
@@ -215,6 +219,16 @@ public class Server implements Runnable{
     private String getProduto(String nome) {
     	
     	Produto result = this.lista.getItem(nome);
+    	
+    	if(result != null)
+    		return result.toString();
+    	else
+    		return "Produto não encontrado";
+    }
+    
+    private String getProdutoCod(String codigo) {
+    	
+    	Produto result = this.lista.getItemByCod(codigo);
     	
     	if(result != null)
     		return result.toString();

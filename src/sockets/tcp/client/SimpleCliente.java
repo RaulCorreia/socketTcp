@@ -171,10 +171,11 @@ public class SimpleCliente {
 	    	System.out.println("2- Apagar Produto");
 	    	System.out.println("3- Listar Produtos");
 	    	System.out.println("4- Pesquisar por nome");
-	    	System.out.println("5- Alterar Produto");
-	    	System.out.println("6- Exibir Quantidade de produtos");
-	    	System.out.println("7- Comprar produto");
-	    	System.out.println("8- Sair");
+	    	System.out.println("5- Pesquisar por codigo");
+	    	System.out.println("6- Alterar Produto");
+	    	System.out.println("7- Exibir Quantidade de produtos");
+	    	System.out.println("8- Comprar produto");
+	    	System.out.println("9- Sair");
 	    	System.out.print(">> ");
     	
 	    	this.option = teclado.nextLine();
@@ -227,15 +228,6 @@ public class SimpleCliente {
 	    				String preco = teclado.nextLine();
     					p.setPreco(preco);
     					
-    					if(this.option.equalsIgnoreCase("Alimento")) {
-    						
-	    				}else if(this.option.equalsIgnoreCase("Eletronico")) {
-	    					System.out.println("Digite o preço do produto");
-	    					tipo = "2";
-	    				}else {
-	    					System.out.println("Digite o preço do produto");
-	    					tipo = "3";
-	    				}
     					
     					String operacao = "add@"+p.toString()+"@"+tipo;
     					
@@ -296,9 +288,7 @@ public class SimpleCliente {
 	    			}
 	    				break;
 	    				
-	    			case 4:{ // Search
-	    				
-	    				System.out.flush();
+	    			case 4:{ // Search nome
 	    				
 	    				System.out.println("Digite o nome do produto");
 	    				String nome = teclado.nextLine();
@@ -313,7 +303,7 @@ public class SimpleCliente {
 	    				// Exibe a resposta formatada
 	    				if(objeto.length > 2) {
 		    				System.out.println("Resultado:");
-	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					System.out.print("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
 	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
 	    						System.out.println("Kg: " + objeto[4]);
 		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
@@ -331,11 +321,41 @@ public class SimpleCliente {
 	    			}
 	    				break;
 	    				
-	    			case 5:{ //Update
+	    			case 5:{ // Search codigo
 	    				
-    					System.out.flush();
+	    				System.out.println("Digite o codigo do produto");
+	    				String nome = teclado.nextLine();
 	    				
-    					Produto p = new Produto();
+	    				String operacao = "searchCod@"+nome.toString();
+	    				
+	    				// Envia para o servidor e obtem a resposta
+	    				String response = sendMessage(operacao);
+	    				
+	    				String objeto[] = response.split(";");
+	    				
+	    				// Exibe a resposta formatada
+	    				if(objeto.length > 2) {
+		    				System.out.println("Resultado:");
+	    					System.out.print("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						System.out.println("Kg: " + objeto[4]);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					System.out.println("Voltagem: " + objeto[4]);
+		    				}else {
+		    					System.out.println("Tamanho: " + objeto[4]);
+		    				}
+	    				} else {
+	    					System.out.println(response);
+	    				}
+    					
+    					System.out.println("\nEnter para continuar");
+	    				teclado.nextLine();
+	    				
+	    			}
+	    				break;
+	    				
+	    			case 6:{ //Update
+	    				
 	    				System.out.println("Digite o nome do produto que deseja editar");
 	    				String nome = teclado.nextLine();
 	    				
@@ -344,7 +364,29 @@ public class SimpleCliente {
 	    				
 	    				if(!response.equalsIgnoreCase("Produto não encontrado")) {
 	    					
-		    				String objeto[] = response.split(";");
+	    					String objeto[] = response.split(";");
+	    					Produto p;
+	    					
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						p = new Alimento();
+	    						p.setTipo(objeto[2]);
+	    						System.out.println("Digite a quantidade de KG");
+	    						String kg = teclado.nextLine();
+	    						((Alimento) p).setKilo(kg);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					p = new Eletronico();
+		    					p.setTipo(objeto[2]);
+		    					System.out.println("Digite a voltagem");
+								String volt = teclado.nextLine();
+								((Eletronico) p).setVoltagem(volt);
+		    				}else {
+		    					p = new Roupa();
+		    					p.setTipo(objeto[2]);
+		    					System.out.println("Digite o tamanho");
+								String tamanho = teclado.nextLine();
+								((Roupa) p).setTamanho(tamanho);
+		    				}
+	    					
 		    				
 		    				System.out.println("Digite o novo id do produto");
 		    				String id = teclado.nextLine();
@@ -358,22 +400,6 @@ public class SimpleCliente {
 		    				String preco = teclado.nextLine();
 	    					p.setPreco(preco);
 	    					
-	    					p.setTipo(objeto[2]);
-	    					
-	    				
-	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
-	    						System.out.println("Digite a quantidade de KG");
-	    						String kg = teclado.nextLine();
-	    						((Alimento) p).setKilo(kg);
-		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
-		    					System.out.println("Digite a voltagem");
-								String volt = teclado.nextLine();
-								((Eletronico) p).setVoltagem(volt);
-		    				}else {
-		    					System.out.println("Digite o tamanho");
-								String tamanho = teclado.nextLine();
-								((Roupa) p).setTamanho(tamanho);
-		    				}
 	    					
 	    					
 		    				String operacao2 = "update@"+nome.toString()+"@"+p.toString();
@@ -390,9 +416,7 @@ public class SimpleCliente {
 	    			}
 	    				break;
 	    				
-	    			case 6:{ // Show qtd
-	    				
-    					System.out.flush();
+	    			case 7:{ // Show qtd
 	    				
 	    				String operacao = "show@qtd";
 	    				
@@ -405,8 +429,7 @@ public class SimpleCliente {
 	    			}
 	    				break;
 	    				
-	    			case 7:{ // Buy
-	    				System.out.flush();
+	    			case 8:{ // Buy
 	    				
 	    				System.out.println("Digite o nome do produto");
 	    				String nome = teclado.nextLine();
@@ -421,7 +444,7 @@ public class SimpleCliente {
 	    			}
 	    				break;
 	    				
-	    			case 8: // Exit
+	    			case 9: // Exit
 	    				this.subMenu = false;
 	    				break;
 	        	}
@@ -447,9 +470,10 @@ public class SimpleCliente {
 	    	System.out.println("Opções:");
 	    	System.out.println("1- Listar Produtos");
 	    	System.out.println("2- Pesquisar por nome");
-	    	System.out.println("3- Exibir Quantidade de produtos");
-	    	System.out.println("4- Comprar produto");
-	    	System.out.println("5- Sair");
+	    	System.out.println("3- Pesquisar por id");
+	    	System.out.println("4- Exibir Quantidade de produtos");
+	    	System.out.println("5- Comprar produto");
+	    	System.out.println("6- Sair");
 	    	System.out.print(">> ");
     	
 	    	this.option = teclado.nextLine();
@@ -464,18 +488,27 @@ public class SimpleCliente {
 	    			
 	    			case 1: { // List
 	    				
-    					System.out.flush();
-	    			
-	    				String operacao = "list@list";
+    					String operacao = "list@list";
 	    				
+	    				// Envia para o servidor e obtem a resposta
 	    				String list = sendMessage(operacao);
 	    				String objetos[] = list.split("!");
 	    				
+	    				// Exibe a lista de produtos
 	    				System.out.println("Lista de Produtos:");
 	    				for(int i = 0; i < objetos.length; i++) {
 	    					
 	    					String objeto[] = objetos[i].split(";");
-	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					System.out.print("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3]);
+	    					
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						System.out.println(" - Kg: " + objeto[4]);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					System.out.println(" - Voltagem: " + objeto[4]);
+		    				}else {
+		    					System.out.println(" - Tamanho: " + objeto[4]);
+		    				}
+	    					
 	    					
 	    				}
 	    				
@@ -487,20 +520,30 @@ public class SimpleCliente {
 	    				
 	    			case 2:{ // Search
 	    				
-	    				System.out.flush();
+    					System.out.println("\nEnter para continuar");
+	    				teclado.nextLine();
 	    				
 	    				System.out.println("Digite o nome do produto");
 	    				String nome = teclado.nextLine();
 	    				
 	    				String operacao = "search@"+nome.toString();
 	    				
+	    				// Envia para o servidor e obtem a resposta
 	    				String response = sendMessage(operacao);
 	    				
 	    				String objeto[] = response.split(";");
 	    				
+	    				// Exibe a resposta formatada
 	    				if(objeto.length > 2) {
 		    				System.out.println("Resultado:");
-	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					System.out.print("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						System.out.println("Kg: " + objeto[4]);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					System.out.println("Voltagem: " + objeto[4]);
+		    				}else {
+		    					System.out.println("Tamanho: " + objeto[4]);
+		    				}
 	    				} else {
 	    					System.out.println(response);
 	    				}
@@ -511,9 +554,39 @@ public class SimpleCliente {
 	    			}
 	    				break;
 	    				
-	    			case 3:{ // Show qtd
+	    			case 3:{ // Search codigo
 	    				
-    					System.out.flush();
+	    				System.out.println("Digite o codigo do produto");
+	    				String nome = teclado.nextLine();
+	    				
+	    				String operacao = "searchCod@"+nome.toString();
+	    				
+	    				// Envia para o servidor e obtem a resposta
+	    				String response = sendMessage(operacao);
+	    				
+	    				String objeto[] = response.split(";");
+	    				
+	    				// Exibe a resposta formatada
+	    				if(objeto.length > 2) {
+		    				System.out.println("Resultado:");
+	    					System.out.print("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						System.out.println("Kg: " + objeto[4]);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					System.out.println("Voltagem: " + objeto[4]);
+		    				}else {
+		    					System.out.println("Tamanho: " + objeto[4]);
+		    				}
+	    				} else {
+	    					System.out.println(response);
+	    				}
+    					
+    					System.out.println("\nEnter para continuar");
+	    				teclado.nextLine();
+	    				
+	    			}
+	    				
+	    			case 4:{ // Show qtd
 	    				
 	    				String operacao = "show@qtd";
 	    				
@@ -525,8 +598,7 @@ public class SimpleCliente {
 	    			}
 	    				break;
 	    				
-	    			case 4:{ // Buy
-	    				System.out.flush();
+	    			case 5:{ // Buy
 	    				
 	    				System.out.println("Digite o nome do produto");
 	    				String nome = teclado.nextLine();
@@ -537,10 +609,11 @@ public class SimpleCliente {
 	    				
 	    				System.out.println("\nEnter para continuar");
 	    				teclado.nextLine();
+	    				
 	    			}
 	    				break;
 	    				
-	    			case 5: // Exit
+	    			case 6: // Exit
 	    				this.subMenu = false;
 	    				break;
 	        	}
