@@ -25,6 +25,7 @@ public class RunClient {
         cliente.init();
         
         System.out.println("Fim do cliente!");
+        System.exit(0);
     }
 	
 	

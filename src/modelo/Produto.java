@@ -49,9 +49,9 @@ public class Produto {
 		this.preco = preco;
 	}
 	
-	public String toString() {
-		String objeto = this.codigo + ";" + this.nome + ";" + this.tipo + ";" + this.preco;
-		return objeto;
-	}
+//	public String toString() {
+//		String objeto = this.codigo + ";" + this.nome + ";" + this.tipo + ";" + this.preco;
+//		return objeto;
+//	}
 	
 }

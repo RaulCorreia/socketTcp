@@ -130,7 +130,7 @@ public class SimpleCliente {
     				
     				
     
-            	} else {
+            	} else if (this.option.equalsIgnoreCase("sair")){
             		// Finalizar o cliente e conexão
             		this.menu = false;
             		String operacao = "close@close";
@@ -139,6 +139,8 @@ public class SimpleCliente {
     				if(multicast != null) {
     					multicast.desativar();
     				}
+            	} else {
+            		System.out.println("Opção invalida");
             	}
          
             	
@@ -196,12 +198,21 @@ public class SimpleCliente {
 	    				if(this.option.equalsIgnoreCase("Alimento")) {
 	    					p = new Alimento();
 	    					tipo = "1";
+	    					System.out.println("Digite a quantidade de KG");
+    						String kg = teclado.nextLine();
+    						((Alimento) p).setKilo(kg);
 	    				}else if(this.option.equalsIgnoreCase("Eletronico")) {
 	    					p = new Eletronico();
 	    					tipo = "2";
+	    					System.out.println("Digite a voltagem");
+    						String volt = teclado.nextLine();
+    						((Eletronico) p).setVoltagem(volt);
 	    				}else {
 	    					p = new Roupa();
 	    					tipo = "3";
+	    					System.out.println("Digite o tamanho");
+    						String tamanho = teclado.nextLine();
+    						((Roupa) p).setTamanho(tamanho);
 	    				}
 	    				
 	    				System.out.println("Digite o id do produto");
@@ -215,6 +226,16 @@ public class SimpleCliente {
     					System.out.println("Digite o preço do produto");
 	    				String preco = teclado.nextLine();
     					p.setPreco(preco);
+    					
+    					if(this.option.equalsIgnoreCase("Alimento")) {
+    						
+	    				}else if(this.option.equalsIgnoreCase("Eletronico")) {
+	    					System.out.println("Digite o preço do produto");
+	    					tipo = "2";
+	    				}else {
+	    					System.out.println("Digite o preço do produto");
+	    					tipo = "3";
+	    				}
     					
     					String operacao = "add@"+p.toString()+"@"+tipo;
     					
@@ -256,7 +277,16 @@ public class SimpleCliente {
 	    				for(int i = 0; i < objetos.length; i++) {
 	    					
 	    					String objeto[] = objetos[i].split(";");
-	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					System.out.print("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3]);
+	    					
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						System.out.println(" - Kg: " + objeto[4]);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					System.out.println(" - Voltagem: " + objeto[4]);
+		    				}else {
+		    					System.out.println(" - Tamanho: " + objeto[4]);
+		    				}
+	    					
 	    					
 	    				}
 	    				
@@ -284,6 +314,13 @@ public class SimpleCliente {
 	    				if(objeto.length > 2) {
 		    				System.out.println("Resultado:");
 	    					System.out.println("ID: "+ objeto[0] +" - Nome: " + objeto[1] + " - Tipo: " + objeto[2] + " - Preço: " + objeto[3] );
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						System.out.println("Kg: " + objeto[4]);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					System.out.println("Voltagem: " + objeto[4]);
+		    				}else {
+		    					System.out.println("Tamanho: " + objeto[4]);
+		    				}
 	    				} else {
 	    					System.out.println(response);
 	    				}
@@ -302,24 +339,50 @@ public class SimpleCliente {
 	    				System.out.println("Digite o nome do produto que deseja editar");
 	    				String nome = teclado.nextLine();
 	    				
-	    				System.out.println("Digite o novo id do produto");
-	    				String id = teclado.nextLine();
-    					p.setCodigo(id);
+    					String operacao = "search@"+nome;
+	    				String response = sendMessage(operacao);
 	    				
-	    				System.out.println("Digite o nome do produto");
-	    				String novoNome = teclado.nextLine();
-    					p.setNome(novoNome);
-    					
-    					System.out.println("Digite o preço do produto");
-	    				String preco = teclado.nextLine();
-    					p.setPreco(preco);
-    					
-    					p.setTipo("tipo");
-    					
-	    				String operacao = "update@"+nome.toString()+"@"+p.toString();
+	    				if(!response.equalsIgnoreCase("Produto não encontrado")) {
+	    					
+		    				String objeto[] = response.split(";");
+		    				
+		    				System.out.println("Digite o novo id do produto");
+		    				String id = teclado.nextLine();
+	    					p.setCodigo(id);
+		    				
+		    				System.out.println("Digite o nome do produto");
+		    				String novoNome = teclado.nextLine();
+	    					p.setNome(novoNome);
+	    					
+	    					System.out.println("Digite o preço do produto");
+		    				String preco = teclado.nextLine();
+	    					p.setPreco(preco);
+	    					
+	    					p.setTipo(objeto[2]);
+	    					
 	    				
-	    				// Envia para o servidor e exibe a resposta
-	    				System.out.println(sendMessage(operacao));
+	    					if(objeto[2].equalsIgnoreCase("Alimento")) {
+	    						System.out.println("Digite a quantidade de KG");
+	    						String kg = teclado.nextLine();
+	    						((Alimento) p).setKilo(kg);
+		    				}else if(objeto[2].equalsIgnoreCase("Eletronico")) {
+		    					System.out.println("Digite a voltagem");
+								String volt = teclado.nextLine();
+								((Eletronico) p).setVoltagem(volt);
+		    				}else {
+		    					System.out.println("Digite o tamanho");
+								String tamanho = teclado.nextLine();
+								((Roupa) p).setTamanho(tamanho);
+		    				}
+	    					
+	    					
+		    				String operacao2 = "update@"+nome.toString()+"@"+p.toString();
+		    				
+		    				// Envia para o servidor e exibe a resposta
+		    				System.out.println(sendMessage(operacao2));
+	    				} else {
+	    					System.out.println("Objeto não existe para ser editado.");
+	    				}
 	    				
 	    				System.out.println("\nEnter para continuar");
 	    				teclado.nextLine();
@@ -558,7 +621,7 @@ public class SimpleCliente {
 	                	// Se a mensagem originol do cliente ele nao ira exibir
 	                	// Somente para o restante do grupo
 	                	if(!split[0].equals(sign)) {
-		                	System.out.println(split[1]);
+		                	System.err.println(" ** "+split[1]+ " ** ");
 	                	}
 	                	
 	                }

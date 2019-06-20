@@ -159,25 +159,36 @@ public class Server implements Runnable{
     	if(produto[0].isEmpty()) {
     		return "Id não pode ser vazio";
     	}
+    	
     	if(produto[1].isEmpty()) {
     		return "Nome não pode ser vazio";
     	}
+    	
     	if(produto[2].isEmpty()) {
     		return "Preço não pode ser vazio";
     	}
     	
+    	if(this.lista.checkExist(produto[1])) {
+    		return "Nome já exite";
+    	}
+    	
+    	if(this.lista.checkId(produto[0])) {
+    		return "Id já exite";
+    	}
+    	
+    	
     	// Cria objeto e add na lista de produto
     	Produto novo;
     	if(tipo.equalsIgnoreCase("1"))
-    		novo = new Alimento(produto[0], produto[1], produto[3]);
+    		novo = new Alimento(produto[0], produto[1], produto[3], produto[4]);
     	else if(tipo.equalsIgnoreCase("2"))
-    		novo = new Eletronico(produto[0], produto[1], produto[3]);
+    		novo = new Eletronico(produto[0], produto[1], produto[3], produto[4]);
     	else
-    		novo = new Roupa(produto[0], produto[1], produto[3]);
+    		novo = new Roupa(produto[0], produto[1], produto[3], produto[4]);
     	
     	this.lista.setItem(novo);
     	
-    	sendCast("Um item foi adicionado a lista");
+    	sendCast("Um novo item foi adicionado a lista");
     	
     	return "Adicionado";
     }
@@ -215,12 +226,12 @@ public class Server implements Runnable{
     	
     	String produto[] = objeto.split(";");
     	
-    	if(produto.length < 3) {
+    	if(produto.length < 4) {
     		return "Todos os campos devem ser preenchidos";
     	}
     	
     	
-    	boolean result = this.lista.updateItem(nome, produto[0], produto[1], produto[3]);
+    	boolean result = this.lista.updateItem(nome, produto[0], produto[1], produto[3], produto[4]);
     	String mensagem = "";
     	
     	if(result) {

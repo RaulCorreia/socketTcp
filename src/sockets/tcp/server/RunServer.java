@@ -41,20 +41,20 @@ public class RunServer {
         ListProduto lista = new ListProduto();
         
         // ID, Nome, Tipo, Preco
-        Eletronico e1 = new Eletronico("1", "Tv", "1000,00");
-        Eletronico e2 = new Eletronico("2", "Celular", "1000,00");
-        Eletronico e3 = new Eletronico("3", "Som", "250,00");
-        Eletronico e4 = new Eletronico("4", "Computador", "1500,00");
+        Eletronico e1 = new Eletronico("1", "Tv", "1000,00", "220");
+        Eletronico e2 = new Eletronico("2", "Celular", "1000,00", "220");
+        Eletronico e3 = new Eletronico("3", "Som", "250,00", "220");
+        Eletronico e4 = new Eletronico("4", "Computador", "1500,00", "220");
         
-        Alimento a1 = new Alimento("5", "Arroz", "5,00");
-        Alimento a2 = new Alimento("6", "Feijão", "8,00");
-        Alimento a3 = new Alimento("7", "Farinha", "2,00");
-        Alimento a4 = new Alimento("8", "Leite", "2,50");
+        Alimento a1 = new Alimento("5", "Arroz", "5,00", "1");
+        Alimento a2 = new Alimento("6", "Feijão", "8,00", "1");
+        Alimento a3 = new Alimento("7", "Farinha", "2,00", "1");
+        Alimento a4 = new Alimento("8", "Leite", "2,50", "0,5");
         
-        Roupa r1 = new Roupa("9", "Camisa", "100,00");
-        Roupa r2 = new Roupa("10", "Calça", "150,00");
-        Roupa r3 = new Roupa("11", "Meia", "15,00");
-        Roupa r4 = new Roupa("12", "Cueca", "25,00");
+        Roupa r1 = new Roupa("9", "Camisa", "100,00", "M");
+        Roupa r2 = new Roupa("10", "Calça", "150,00", "40");
+        Roupa r3 = new Roupa("11", "Meia", "15,00", "M");
+        Roupa r4 = new Roupa("12", "Cueca", "25,00", "G");
         
         lista.setItem(e1);
         lista.setItem(e2);
